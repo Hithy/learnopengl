@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.10)
+project(hello_gl)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+
+add_executable(hello_gl "src/main.cpp" "src/shader.cpp" "3rd/src/glad.c")
+
+target_include_directories(hello_gl PUBLIC "3rd/include")
+target_link_directories(hello_gl PUBLIC "3rd/lib")
+target_link_libraries(hello_gl dl glfw)
