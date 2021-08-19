@@ -3,6 +3,8 @@ project(hello_gl)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
+find_package(glfw3 REQUIRED)
+
 add_executable(hello_gl "src/main.cpp" "src/shader.cpp" "3rd/src/glad.c")
 
 target_include_directories(hello_gl PUBLIC "3rd/include")
