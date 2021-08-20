@@ -5,8 +5,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 find_package(glfw3 REQUIRED)
 
+add_subdirectory("3rd/glm")
+
 add_executable(hello_gl "src/main.cpp" "src/shader.cpp" "3rd/src/glad.c")
 
-target_include_directories(hello_gl PUBLIC "3rd/include")
+target_include_directories(hello_gl PUBLIC "3rd/include" "3rd/glm/glm")
 target_link_directories(hello_gl PUBLIC "3rd/lib")
-target_link_libraries(hello_gl dl glfw)
+target_link_libraries(hello_gl dl glfw glm)
