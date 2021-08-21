@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(hello_gl)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(glfw3 REQUIRED)
 

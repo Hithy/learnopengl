@@ -35,8 +35,8 @@ Shader::Shader(const char *vert_path, const char *frag_path) {
   const auto* vert_src = vert_src_str.c_str();
   const auto* frag_src = frag_src_str.c_str();
 
-  std::cout << vert_src << std::endl;
-  std::cout << frag_src << std::endl;
+  // std::cout << vert_src << std::endl;
+  // std::cout << frag_src << std::endl;
 
   unsigned int vert_shader, frag_shader;
 
@@ -66,6 +66,11 @@ void Shader::use() {
 void Shader::SetUniform1f(const char *param, float value) {
   int param_pos = glGetUniformLocation(id, param);
   glUniform1f(param_pos, value);
+}
+
+void Shader::SetUniform1i(const char *param, int value) {
+  int param_pos = glGetUniformLocation(id, param);
+  glUniform1i(param_pos, value);
 }
 
 void Shader::SetUniformMat4fv(const char *param, float *ptr) {
