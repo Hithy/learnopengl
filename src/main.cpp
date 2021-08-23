@@ -8,6 +8,7 @@
 #include <complex>
 
 #include "shader.h"
+#include "camera.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -15,41 +16,71 @@
 using std::cout;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void process_input(GLFWwindow* window);
 
 const char* vert_path = "../shader/simple.vert";
 const char* frag_path = "../shader/simple.frag";
 
 float vertices[] = {
- -0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
- 0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,
- 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
- -0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
- -0.5f, 0.5f, 1.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
- 0.5f, 0.5f, 1.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
- 0.5f, -0.5f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
- -0.5f, -0.5f, 1.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-unsigned int indices[] = {
-  0, 1, 2,
-  0, 2, 3,
-
-  1, 5, 6,
-  1, 6, 2,
-
-  5, 4, 7,
-  5, 7, 6,
-
-  4, 0, 3,
-  4, 3, 7,
-
-  4, 5, 1,
-  4, 1, 0,
-
-  3, 2, 6,
-  3, 6, 7
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
 };
+
+auto g_camera = Camera();
 
 void test_glm() {
     glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
@@ -85,13 +116,10 @@ int main() {
     return -1;
   }
 
-  auto model = glm::mat4(1.0f);
-  model = glm::rotate(model, glm::radians(-60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-  auto view = glm::mat4(1.0f);
-  view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-  auto projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+  g_camera.pos = glm::vec3(0.0f, 0.0f, 5.0f);
+  g_camera.forward = glm::vec3(0.0f, 0.0f, -1.0f);
+  g_camera.pitch = 20.0f;
+  g_camera.yaw = 15.0f;
 
   Shader my_shader(vert_path, frag_path);
 
@@ -141,10 +169,9 @@ int main() {
     }
   }
 
-  unsigned int VBO, VAO, EBO;
+  unsigned int VBO, VAO;
 
   glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
   glGenVertexArrays(1, &VAO);
 
   glBindVertexArray(VAO);
@@ -152,14 +179,10 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                        (void *)(6 * sizeof(float)));
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
@@ -167,39 +190,35 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  
-  // trans = glm::rotate(trans, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  // trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+  my_shader.use();
+  my_shader.SetUniform1i("texture1", 0);
+  my_shader.SetUniform1i("texture2", 1);
+
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(window, mouse_callback);
+  glfwSetScrollCallback(window, scroll_callback);
 
   uint64_t currt_frame = 0;
   glEnable(GL_DEPTH_TEST);
   while (!glfwWindowShouldClose(window)) {
+    process_input(window);
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    my_shader.use();
-    my_shader.SetUniform1i("texture1", 0);
-    my_shader.SetUniform1i("texture2", 1);
-
-    model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-    
-    my_shader.SetUniformMat4fv("model", glm::value_ptr(model));
-    my_shader.SetUniformMat4fv("projection", glm::value_ptr(projection));
-    my_shader.SetUniformMat4fv("view", glm::value_ptr(view));
-    auto now_time = std::chrono::steady_clock::now();
-
-    // auto delta = std::chrono::duration_cast<
-    //     std::chrono::duration<float, std::ratio<1, 10> > >(
-    //     now_time.time_since_epoch());
-    // my_shader.SetUniform1f("Elapse", (std::sin(delta.count()) + 1) / 2.0f);
-    // auto trans = glm::mat4(1.0f);
-    // trans = glm::translate(trans, glm::vec3(0.5f, 0.5f, 0.5f));
-    // trans = glm::rotate(trans, glm::radians(0.0f + currt_frame), glm::vec3(0.0f, 0.0f, 1.0f));
-    // my_shader.SetUniformMat4fv("transform", glm::value_ptr(trans));
-
     glBindVertexArray(VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    my_shader.use();
+
+    auto view = g_camera.GetView();
+    my_shader.SetUniformMat4fv("view", glm::value_ptr(view));
+    auto projection = glm::perspective(glm::radians(g_camera.fov), 800.0f / 600.0f, 0.1f, 100.0f);
+    my_shader.SetUniformMat4fv("projection", glm::value_ptr(projection));
+
+    for (int i=0; i< sizeof(cubePositions) / sizeof(cubePositions[0]); i++) {
+        auto model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
+        my_shader.SetUniformMat4fv("model", glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -212,7 +231,67 @@ int main() {
   return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
+void process_input(GLFWwindow *window) {
+    const float camera_speed = 0.05f;
+
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    auto view = g_camera.GetView();
+    view = glm::inverse(view);
+
+    auto forward = view * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+    auto right = view * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        g_camera.pos += glm::vec3(forward * camera_speed);
+    } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        g_camera.pos -= glm::vec3(forward * camera_speed);
+    } else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        g_camera.pos -= glm::vec3(right * camera_speed);
+    } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        g_camera.pos += glm::vec3(right * camera_speed);
+    }
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    static float lastX = xpos;
+    static float lastY = ypos;
+
+    float xoffset = xpos - lastX;
+    float yoffset = ypos - lastY;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    const float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    g_camera.yaw += xoffset;
+    g_camera.pitch -= yoffset;
+
+    if (g_camera.pitch > 89.0f) {
+        g_camera.pitch = 89.0f;
+    }
+
+    if (g_camera.pitch < -89.0f) {
+        g_camera.pitch = -89.0f;
+    }
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    g_camera.fov -= (float) yoffset;
+    if (g_camera.fov < 1.0f) {
+      g_camera.fov = 1.0f;
+    }
+
+    if (g_camera.fov > 45.0f) {
+      g_camera.fov = 45.0f;
+    }
 }
