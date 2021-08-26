@@ -15,7 +15,6 @@ endif(UNIX)
 if (WIN32)
   # windows compile from source
   if (NOT EXISTS "${CMAKE_SOURCE_DIR}/3rd/glm")
-    message("helloasdjlfk 123")
     execute_process(COMMAND git clone https://github.com/g-truc/glm.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
   endif()
   if (NOT EXISTS "${CMAKE_SOURCE_DIR}/3rd/glfw")
