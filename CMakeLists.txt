@@ -14,9 +14,13 @@ endif(UNIX)
 
 if (WIN32)
   # windows compile from source
-  if (NOT (EXISTS "3rd/glm" AND EXISTS "3rd/glfw"))
-    execute_process(COMMAND git submodule update --recursive --init WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+  if (NOT EXISTS "3rd/glm")
+    execute_process(COMMAND git clone https://github.com/g-truc/glm.git 3rd/ WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
   endif()
+  if (NOT EXISTS "3rd/glfw")
+    execute_process(COMMAND git clone https://github.com:glfw/glfw.git 3rd/ WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+  endif()
+
   add_subdirectory("3rd/glm")
   add_subdirectory("3rd/glfw")
 
