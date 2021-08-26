@@ -18,7 +18,7 @@ if (WIN32)
     execute_process(COMMAND git clone https://github.com/g-truc/glm.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
   endif()
   if (NOT EXISTS "3rd/glfw")
-    execute_process(COMMAND git clone https://github.com:glfw/glfw.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
+    execute_process(COMMAND git clone https://github.com/glfw/glfw.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
   endif()
 
   add_subdirectory("3rd/glm")
