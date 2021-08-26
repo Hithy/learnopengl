@@ -14,10 +14,10 @@ endif(UNIX)
 
 if (WIN32)
   # windows compile from source
-  if (NOT EXISTS "3rd/glm")
+  if (NOT (EXISTS "3rd/glm"))
     execute_process(COMMAND git clone https://github.com/g-truc/glm.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
   endif()
-  if (NOT EXISTS "3rd/glfw")
+  if (NOT (EXISTS "3rd/glfw"))
     execute_process(COMMAND git clone https://github.com/glfw/glfw.git WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
   endif()
 
