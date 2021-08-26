@@ -14,8 +14,9 @@ endif(UNIX)
 
 if (WIN32)
   # windows compile from source
-  message("hell" ${GIT_EXECUTABLE})
-  execute_process(COMMAND git submodule update --recursive WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+  if (NOT (EXISTS "3rd/glm" AND EXISTS "3rd/glfw"))
+    execute_process(COMMAND git submodule update --recursive WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+  endif()
   add_subdirectory("3rd/glm")
   add_subdirectory("3rd/glfw")
 
