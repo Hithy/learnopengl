@@ -77,3 +77,10 @@ void Shader::SetUniformMat4fv(const char *param, float *ptr) {
   int param_pos = glGetUniformLocation(id, param);
   glUniformMatrix4fv(param_pos, 1, GL_FALSE, ptr);
 }
+
+void Shader::SetUniform3fv(const char *param, float x, float y, float z) {
+  int param_pos = glGetUniformLocation(id, param);
+  glUniform3f(param_pos, x, y, z);
+}
+
+

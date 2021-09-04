@@ -1,6 +1,6 @@
 compile_commands.json
 
-build/
+build*
 
 .ccls-cache
 *~
