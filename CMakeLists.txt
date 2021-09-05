@@ -9,8 +9,8 @@ add_executable(hello_gl "src/main.cpp" "src/glbase.cpp" "src/gllightdemo.cpp" "s
 function(fetch_git_repo path name)
   if (NOT EXISTS "${CMAKE_SOURCE_DIR}/3rd/${name}")
     execute_process(COMMAND git clone ${path} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/3rd")
-    add_subdirectory("3rd/${name}")
   endif()
+  add_subdirectory("3rd/${name}")
 endfunction()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
