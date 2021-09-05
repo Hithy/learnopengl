@@ -33,3 +33,9 @@ if (UNIX)
   target_link_libraries(hello_gl dl)
 endif(UNIX)
 target_link_libraries(hello_gl glfw assimp)
+
+add_custom_target(run
+  COMMAND hello_gl
+  DEPENDS hello_gl
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  )

@@ -80,10 +80,8 @@ static glm::vec3 cubePositions[] = {
 
 static void load_texture() {
   int width, height, nrChannels;
-  // const char *image_path_wall = "../asserts/images/wall.jpg";
-  // const char *image_path_face = "../asserts/images/awesomeface.png";
-  const char *image_path_wall = "../asserts/images/container2.png";
-  const char *image_path_face = "../asserts/images/container2_specular.png";
+  const char *image_path_wall = "asserts/images/container2.png";
+  const char *image_path_face = "asserts/images/container2_specular.png";
   unsigned char *data = NULL;
 
   unsigned int texture1, texture2;
@@ -126,8 +124,8 @@ static void load_texture() {
 GLLightDemo::GLLightDemo() : GLBase("hello_gl", 1920, 1080) {}
 
 void GLLightDemo::Init() {
-  _shader = new Shader("../shader/light.vert", "../shader/light.frag");
-  _light_shader = new Shader("../shader/light.vert", "../shader/light_base.frag");
+  _shader = new Shader("shader/light.vert", "shader/light.frag");
+  _light_shader = new Shader("shader/light.vert", "shader/light_base.frag");
 
   LoadTexture();
   InitVAO();
@@ -261,10 +259,8 @@ void GLLightDemo::InitVAO() {
 
 void GLLightDemo::LoadTexture() {
     int width, height, nrChannels;
-  // const char *image_path_wall = "../asserts/images/wall.jpg";
-  // const char *image_path_face = "../asserts/images/awesomeface.png";
-  const char *image_path_wall = "../asserts/images/container2.png";
-  const char *image_path_face = "../asserts/images/container2_specular.png";
+  const char *image_path_wall = "asserts/images/container2.png";
+  const char *image_path_face = "asserts/images/container2_specular.png";
   unsigned char *data = NULL;
 
   unsigned int texture1, texture2;
