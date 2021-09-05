@@ -71,7 +71,7 @@ static glm::vec3 cubePositions[] = {
 };
 
 
-GLDefault::GLDefault() : GLBase("hello_gl", 800, 600) {}
+GLDefault::GLDefault() : GLBase("hello_gl", 1920, 1080) {}
 
 void GLDefault::Init() {
   _shader = new Shader("../shader/simple.vert", "../shader/simple.frag");

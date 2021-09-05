@@ -1,9 +1,9 @@
 #include <iostream>
-#include "gldefault.h"
+#include "gllightdemo.h"
 
 int main() {
 
-  LearnGL::GLDefault inst;
+  LearnGL::GLLightDemo inst;
 
   inst.Init();
   inst.Run();

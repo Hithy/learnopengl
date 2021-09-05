@@ -21,7 +21,7 @@ static void framebuffer_size_callback(GLFWwindow *window, int width,
 void process_input(GLFWwindow *window) {
   auto& camera = window2gl[window]->GetCamera();
 
-  const float camera_speed = 0.05f;
+  const float camera_speed = 0.005f;
 
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
