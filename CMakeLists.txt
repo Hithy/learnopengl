@@ -4,7 +4,7 @@ project(hello_gl)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(hello_gl "src/main.cpp" "src/glbase.cpp" "src/gllightdemo.cpp" "src/shader.cpp" "src/camera.cpp" "3rd/src/glad.c")
+add_executable(hello_gl "src/main.cpp" "src/glbase.cpp" "src/glstencil.cpp" "src/shader.cpp" "src/camera.cpp" "3rd/src/glad.c")
 
 function(fetch_git_repo path name)
   if (NOT EXISTS "${CMAKE_SOURCE_DIR}/3rd/${name}")

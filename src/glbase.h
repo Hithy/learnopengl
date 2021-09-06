@@ -4,6 +4,8 @@ class GLFWwindow;
 
 namespace LearnGL {
 
+unsigned int GenTexture(const char* path);
+
 class GLBase {
 public:
   GLBase(const char *title, int width, int height);
