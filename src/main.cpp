@@ -1,9 +1,9 @@
 #include <iostream>
-#include "glstencil.h"
+#include "glframebuffer.h"
 
 int main() {
 
-  LearnGL::GLStencil inst;
+  LearnGL::GLFrameBuffer inst;
 
   inst.Init();
   inst.Run();
