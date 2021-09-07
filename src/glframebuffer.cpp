@@ -75,6 +75,13 @@ static float screenVertices[] = {
   1.0f,  1.0f, 1.0f, 1.0f,
   -1.0f,  1.0f, 0.0f, 1.0f,
   -1.0f, -1.0f, 0.0f, 0.0f,
+
+  0.5f, 0.5f, 0.0f, 0.0f,
+  1.0f, 0.5f, 1.0f, 0.0f,
+  1.0f,  1.0f, 1.0f, 1.0f,
+  1.0f,  1.0f, 1.0f, 1.0f,
+  0.5f,  1.0f, 0.0f, 1.0f,
+  0.5f, 0.5f, 0.0f, 0.0f,
 };
 
 GLFrameBuffer::GLFrameBuffer()
@@ -158,7 +165,7 @@ void GLFrameBuffer::Init() {
   _shader = new Shader("shader/depth.vert", "shader/depth.frag");
   _quad_shader = new Shader("shader/fbo.vert", "shader/fbo.frag");
 
-  _cube_texture = GenTexture("asserts/images/marble.jpg");
+  _cube_texture = GenTexture("asserts/images/container.jpg");
   _floor_texture = GenTexture("asserts/images/metal.png");
 
   GenFrameBuffer();
@@ -209,7 +216,7 @@ void GLFrameBuffer::DrawNormal() {
   _quad_shader->use();
   glBindTexture(GL_TEXTURE_2D, _fbo_texture);
   glBindVertexArray(_screen_vao);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glDrawArrays(GL_TRIANGLES, 0, 12);
 }
 
 void GLFrameBuffer::Draw() {
