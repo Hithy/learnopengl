@@ -1,9 +1,9 @@
 #include <iostream>
-#include "glframebuffer.h"
+#include "glskycube.h"
 
 int main() {
 
-  LearnGL::GLFrameBuffer inst;
+  LearnGL::GLSkyCube inst;
 
   inst.Init();
   inst.Run();
