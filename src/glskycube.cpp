@@ -211,21 +211,19 @@ void GLSkyCube::DrawSkybox() {
   auto skybox_view = glm::mat4(glm::mat3(_camera.GetView()));
   auto projection = glm::perspective(glm::radians(_camera.fov), 800.0f / 600.0f,
                                      0.1f, 100.0f);
-  glDepthMask(GL_FALSE);
+  glDepthFunc(GL_LEQUAL);
   _skybox_shader->use();
   _skybox_shader->SetUniformMat4fv("view", glm::value_ptr(skybox_view));
   _skybox_shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
   glBindVertexArray(_skybox_vao);
   glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_texture);
   glDrawArrays(GL_TRIANGLES, 0, 36);
-  glDepthMask(GL_TRUE);
+  glDepthFunc(GL_LESS);
 }
 
 void GLSkyCube::Draw() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  DrawSkybox();
 
   auto view = _camera.GetView();
   auto projection = glm::perspective(glm::radians(_camera.fov), 800.0f / 600.0f,
@@ -252,6 +250,7 @@ void GLSkyCube::Draw() {
   model = glm::mat4(1.0f);
   _shader->SetUniformMat4fv("model", glm::value_ptr(model));
   glDrawArrays(GL_TRIANGLES, 0, 6);
-  
+
+  DrawSkybox();
 }
 }; // namespace LearnGL
