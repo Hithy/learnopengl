@@ -76,10 +76,6 @@ void GLDepth::Init() {
   // gen texture
   _cube_texture = GenTexture("asserts/images/marble.jpg");
   _floor_texture = GenTexture("asserts/images/metal.png");
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _cube_texture);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, _floor_texture);
 
   glGenBuffers(1, &_cube_vao);
   glGenBuffers(1, &_cube_vbo);
@@ -116,23 +112,25 @@ void GLDepth::Draw() {
 
   _shader->use();
   auto view = _camera.GetView();
-  _shader->SetUniformMat4fv("view", glm::value_ptr(view));
   auto projection = glm::perspective(glm::radians(_camera.fov), 800.0f / 600.0f,
                                      0.1f, 100.0f);
+  auto model = glm::mat4(1.0f);
+
+  _shader->SetUniformMat4fv("view", glm::value_ptr(view));
   _shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
 
   glActiveTexture(GL_TEXTURE0);
 
-  glBindTexture(GL_TEXTURE0, _cube_texture);
+  glBindTexture(GL_TEXTURE_2D, _cube_texture);
   glBindVertexArray(_cube_vao);
-  auto model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f));
+  model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f));
   _shader->SetUniformMat4fv("model", glm::value_ptr(model));
   glDrawArrays(GL_TRIANGLES, 0, 36);
   model = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
   _shader->SetUniformMat4fv("model", glm::value_ptr(model));
   glDrawArrays(GL_TRIANGLES, 0, 36);
 
-  glBindTexture(GL_TEXTURE0, _floor_texture);
+  glBindTexture(GL_TEXTURE_2D, _floor_texture);
   glBindVertexArray(_floor_vao);
   model = glm::mat4(1.0f);
   _shader->SetUniformMat4fv("model", glm::value_ptr(model));

@@ -1,4 +1,4 @@
-#include "GLBlending.h"
+#include "glblending.h"
 
 #include <string>
 #include <vector>
