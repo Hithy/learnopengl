@@ -24,7 +24,7 @@ static void framebuffer_size_callback(GLFWwindow *window, int width,
 void process_input(GLFWwindow *window) {
   auto& camera = window2gl[window]->GetCamera();
 
-  const float camera_speed = 0.005f;
+  const float camera_speed = 0.05f;
 
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
@@ -83,16 +83,16 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     camera.fov = 1.0f;
   }
 
-  if (camera.fov > 45.0f) {
-    camera.fov = 45.0f;
+  if (camera.fov > 60.0f) {
+    camera.fov = 60.0f;
   }
 }
 
 GLBase::GLBase(const char *title, int width, int height)
     : _window_width(width), _window_height(height) {
   glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #if __APPLE__

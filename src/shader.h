@@ -10,6 +10,8 @@ public:
   void SetUniformMat4fv(const char *param, float *ptr);
   void SetUniform3fv(const char *param, float x, float y, float z);
 
+  unsigned int GetID() const { return id; }
+
 private:
   unsigned int id;
 };

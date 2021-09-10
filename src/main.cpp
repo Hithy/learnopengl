@@ -1,9 +1,9 @@
 #include <iostream>
-#include "glskycube.h"
+#include "glglsl.h"
 
 int main() {
 
-  LearnGL::GLSkyCube inst;
+  LearnGL::GLGLSL inst;
 
   inst.Init();
   inst.Run();
