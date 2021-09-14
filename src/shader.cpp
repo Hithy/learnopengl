@@ -28,27 +28,22 @@ static std::string get_file_content(const char *file_path) {
   return res;
 }
 
+unsigned int Shader::CreateShader(const char *path, unsigned int type) {
+  unsigned int shader;
+
+  auto src_str = get_file_content(path);
+  const auto* src = src_str.c_str();
+
+  shader = glCreateShader(type);
+  glShaderSource(shader, 1, &src, NULL);
+  glCompileShader(shader);
+
+  return shader;
+}
+
 Shader::Shader(const char *vert_path, const char *frag_path) {
-  auto vert_src_str = get_file_content(vert_path);
-  auto frag_src_str = get_file_content(frag_path);
-
-  const auto* vert_src = vert_src_str.c_str();
-  const auto* frag_src = frag_src_str.c_str();
-
-  // std::cout << vert_src << std::endl;
-  // std::cout << frag_src << std::endl;
-
-  unsigned int vert_shader, frag_shader;
-
-  vert_shader = glCreateShader(GL_VERTEX_SHADER);
-  frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-  
-  glShaderSource(vert_shader, 1, &vert_src, NULL);
-  glShaderSource(frag_shader, 1, &frag_src, NULL);
-
-  glCompileShader(vert_shader);
-  glCompileShader(frag_shader);
-  
+  auto vert_shader = CreateShader(vert_path, GL_VERTEX_SHADER);
+  auto frag_shader = CreateShader(frag_path, GL_FRAGMENT_SHADER); 
 
   id = glCreateProgram();
   glAttachShader(id, vert_shader);
@@ -56,6 +51,22 @@ Shader::Shader(const char *vert_path, const char *frag_path) {
   glLinkProgram(id);
 
   glDeleteShader(vert_shader);
+  glDeleteShader(frag_shader);
+}
+
+Shader::Shader(const char *vert_path, const char *gs_path, const char *frag_path) {
+  auto vert_shader = CreateShader(vert_path, GL_VERTEX_SHADER);
+  auto geo_shader = CreateShader(gs_path, GL_GEOMETRY_SHADER);
+  auto frag_shader = CreateShader(frag_path, GL_FRAGMENT_SHADER); 
+
+  id = glCreateProgram();
+  glAttachShader(id, vert_shader);
+  glAttachShader(id, geo_shader);
+  glAttachShader(id, frag_shader);
+  glLinkProgram(id);
+
+  glDeleteShader(vert_shader);
+  glDeleteShader(geo_shader);
   glDeleteShader(frag_shader);
 }
 
