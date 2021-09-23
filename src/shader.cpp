@@ -84,7 +84,7 @@ void Shader::SetUniform1i(const char *param, int value) {
   glUniform1i(param_pos, value);
 }
 
-void Shader::SetUniformMat4fv(const char *param, float *ptr) {
+void Shader::SetUniformMat4fv(const char *param, const float *ptr) {
   int param_pos = glGetUniformLocation(id, param);
   glUniformMatrix4fv(param_pos, 1, GL_FALSE, ptr);
 }

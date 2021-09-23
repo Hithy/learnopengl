@@ -4,7 +4,7 @@ project(hello_gl)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 set(CMAKE_CXX_STANDARD 11)
 
-file(GLOB SRC_FILES src/*.cpp)
+file(GLOB SRC_FILES src/*.cpp src/*.h)
 add_executable(hello_gl
   ${SRC_FILES}
   "3rd/src/glad.c")
