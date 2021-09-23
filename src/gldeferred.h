@@ -32,5 +32,6 @@ private:
 
   Shader *_g_buffer_shader;
   Shader *_light_shader;
+  Shader *_simple_shader;
 };
 }; // namespace LearnGL
