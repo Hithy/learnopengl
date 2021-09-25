@@ -14,6 +14,10 @@ protected:
 private:
   void GenGbuffer();
 
+  void DrawGbuffer();
+  void DrawLightColor();
+  void DrawLightBox();
+
 private:
   unsigned int _VAO;
   unsigned int _VBO;

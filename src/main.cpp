@@ -1,9 +1,9 @@
 #include <iostream>
-#include "gldeferred.h"
+#include "glssao.h"
 
 int main() {
 
-  LearnGL::GLDeferred inst;
+  LearnGL::GLSSAO inst;
 
   inst.Init();
   inst.Run();

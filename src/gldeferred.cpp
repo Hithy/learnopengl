@@ -14,7 +14,7 @@
 
 namespace LearnGL {
 
-glm::vec3 objectPositions[] = {
+static glm::vec3 objectPositions[] = {
     glm::vec3(-5.0, -3.0, -5.0),
     glm::vec3(0.0, -3.0, -5.0),
     glm::vec3(5.0, -3.0, -5.0),
@@ -26,7 +26,7 @@ glm::vec3 objectPositions[] = {
     glm::vec3(5.0, -3.0, 5.0)
 };
 
-std::vector<glm::vec3> lightPositions = {
+static std::vector<glm::vec3> lightPositions = {
   glm::vec3(-5.0, -1.0, -5.0),
   glm::vec3(0.0, -1.0, -5.0),
   glm::vec3(5.0, -1.0, -5.0),
@@ -97,34 +97,27 @@ void GLDeferred::GenGbuffer() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void GLDeferred::Draw() {
+void GLDeferred::DrawGbuffer() {
   glBindFramebuffer(GL_FRAMEBUFFER, _gbuffer_fbo);
-  
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  _g_buffer_shader->use();
-  auto view = _camera.GetView();
-  auto projection = glm::perspective(glm::radians(_camera.fov), 1920.0f / 1080.0f,
-                                     0.1f, 100.0f);
-  auto model = glm::mat4(1.0f);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _cube_texture);
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, _cube_specular);
+  _g_buffer_shader->use();
   _g_buffer_shader->SetUniform1i("diffuse", 0);
   _g_buffer_shader->SetUniform1i("specular", 1);
 
-  _g_buffer_shader->SetUniformMat4fv("view", glm::value_ptr(view));
-  _g_buffer_shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
-
   for (auto const &obj_pos : objectPositions) {
     _g_buffer_shader->SetUniformMat4fv(
-        "model", glm::value_ptr(glm::translate(model, obj_pos)));
+        "model", glm::value_ptr(glm::translate(glm::mat4(1.0f), obj_pos)));
     renderBox();
   }
+}
 
+void GLDeferred::DrawLightColor() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -159,19 +152,38 @@ void GLDeferred::Draw() {
   }
 
   renderQuad();
+}
 
+void GLDeferred::DrawLightBox() {
   glBindFramebuffer(GL_READ_FRAMEBUFFER, _gbuffer_fbo);
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  glBlitFramebuffer(0, 0, _window_width, _window_height, 0, 0, _window_width, _window_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+  glBlitFramebuffer(0, 0, _window_width, _window_height, 0, 0, _window_width,
+                    _window_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
   _simple_shader->use();
-  _simple_shader->SetUniformMat4fv("view", glm::value_ptr(view));
-  _simple_shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
   glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
   for (int i = 0; i < lightPositions.size(); i++) {
     _simple_shader->SetUniformMat4fv(
-        "model", glm::value_ptr(glm::translate(glm::mat4(1.0f), lightPositions[i]) * scale));
+        "model",
+        glm::value_ptr(glm::translate(glm::mat4(1.0f), lightPositions[i]) *
+                       scale));
     renderBox();
   }
+}
+
+void GLDeferred::Draw() {
+  auto view = _camera.GetView();
+  auto projection = glm::perspective(glm::radians(_camera.fov), 1920.0f / 1080.0f,
+                                     0.1f, 100.0f);
+  _g_buffer_shader->use();
+  _g_buffer_shader->SetUniformMat4fv("view", glm::value_ptr(view));
+  _g_buffer_shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
+  _simple_shader->use();
+  _simple_shader->SetUniformMat4fv("view", glm::value_ptr(view));
+  _simple_shader->SetUniformMat4fv("projection", glm::value_ptr(projection));
+
+  DrawGbuffer();
+  DrawLightColor();
+  DrawLightBox();
 }
 }; // namespace LearnGL
