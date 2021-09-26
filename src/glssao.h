@@ -1,5 +1,7 @@
 #include "glbase.h"
 
+#include "glm/glm.hpp"
+
 class Shader;
 
 namespace LearnGL {
@@ -41,6 +43,9 @@ private:
 
   unsigned int _ssao_fbo;
   unsigned int _ssao_texture;
+
+  glm::vec3 _light_color_diffuse;
+  glm::vec3 _light_color_specular;
 
   Shader *_light_shader;
   Shader *_simple_shader;

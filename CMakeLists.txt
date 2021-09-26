@@ -5,9 +5,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 set(CMAKE_CXX_STANDARD 11)
 
 file(GLOB SRC_FILES src/*.cpp src/*.h)
+set(IMGUI_FILES
+  "3rd/imgui/imgui.cpp"
+  "3rd/imgui/imgui_draw.cpp"
+  "3rd/imgui/imgui_tables.cpp"
+  "3rd/imgui/imgui_widgets.cpp"
+  "3rd/imgui/imgui_demo.cpp"
+  "3rd/imgui/backends/imgui_impl_opengl3.cpp"
+  "3rd/imgui/backends/imgui_impl_glfw.cpp"
+  )
 add_executable(hello_gl
   ${SRC_FILES}
-  "3rd/src/glad.c")
+  ${IMGUI_FILES}
+  "3rd/src/glad.c"
+  )
 
 function(fetch_git_repo path name)
   if (NOT EXISTS "${CMAKE_SOURCE_DIR}/3rd/${name}")
@@ -31,6 +42,7 @@ else()
 endif()
 
 target_include_directories(hello_gl PUBLIC "3rd/include")
+target_include_directories(hello_gl PUBLIC "3rd/imgui")
 target_link_directories(hello_gl PUBLIC "3rd/lib")
 if (UNIX)
   target_link_libraries(hello_gl dl)

@@ -1,6 +1,6 @@
 #include "camera.h"
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace LearnGL {
 
@@ -12,6 +12,9 @@ public:
 
   virtual void Init();
   void Run();
+
+  void ToggleMouse();
+  bool IsCacheMouse();
 
   Camera &GetCamera() { return _camera; }
 
@@ -26,6 +29,9 @@ protected:
 
   int _window_width;
   int _window_height;
+
+private:
+  bool _gui_catch_mouse;
 };
 
 }; // namespace LearnGL

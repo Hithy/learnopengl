@@ -13,6 +13,7 @@
 
 #include "stb_image.h"
 #include "utils.h"
+#include "imgui.h"
 
 namespace LearnGL {
 
@@ -40,7 +41,10 @@ static std::vector<glm::vec3> lightPositions = {
   // glm::vec3(5.0, -1.0, 5.0),
 };
 
-GLSSAO::GLSSAO() : GLBase("hello_gl", 1920, 1080) {}
+GLSSAO::GLSSAO() : GLBase("hello_gl", 1920, 1080)
+  , _light_color_diffuse(0.2f, 0.2f, 0.7f)
+  , _light_color_specular(0.2f, 0.2f, 0.7f) {
+}
 
 void GLSSAO::Init() {
   this->_ssao_gbuffer_shader =
@@ -278,8 +282,8 @@ void GLSSAO::Draw() {
 
     _ssao_light_shader->SetUniform3fv((light_prefix + ".position").c_str(), light_pos.x, light_pos.y, light_pos.z);
 
-    _ssao_light_shader->SetUniform3fv((light_prefix + ".diffuse").c_str(), 0.2f, 0.2f, 0.7f);
-    _ssao_light_shader->SetUniform3fv((light_prefix + ".specular").c_str(), 0.2f, 0.2f, 0.7f);
+    _ssao_light_shader->SetUniform3fv((light_prefix + ".diffuse").c_str(), _light_color_diffuse.r, _light_color_diffuse.g, _light_color_diffuse.b);
+    _ssao_light_shader->SetUniform3fv((light_prefix + ".specular").c_str(), _light_color_specular.r, _light_color_specular.g, _light_color_specular.b);
     _ssao_light_shader->SetUniform1f((light_prefix + ".constant").c_str(), 1.0f);
     _ssao_light_shader->SetUniform1f((light_prefix + ".linear").c_str(), 0.09f);
     _ssao_light_shader->SetUniform1f((light_prefix + ".quadratic").c_str(), 0.032f);
@@ -301,5 +305,7 @@ void GLSSAO::Draw() {
   //       "model", glm::value_ptr(glm::translate(glm::mat4(1.0f), lightPositions[i]) * scale));
   //   renderBox();
   // }
+  ImGui::ColorEdit3("diffuse color", (float*)&_light_color_diffuse); // Edit 3 floats representing a color
+  ImGui::ColorEdit3("specular color", (float*)&_light_color_specular); // Edit 3 floats representing a color
 }
 }; // namespace LearnGL

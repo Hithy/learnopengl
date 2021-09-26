@@ -51,7 +51,7 @@ void main() {
 
       float attenuation = 1.0 / (light_list[i].constant + light_list[i].linear * light_distance + light_list[i].quadratic * light_distance * light_distance);
 
-      // result += (diffuse + specular) * attenuation;
+      result += (diffuse + specular) * attenuation;
     }
   }
 

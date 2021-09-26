@@ -12,6 +12,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 namespace LearnGL {
 
 static std::unordered_map<GLFWwindow *, GLBase *> window2gl;
@@ -22,12 +26,20 @@ static void framebuffer_size_callback(GLFWwindow *window, int width,
 }
 
 void process_input(GLFWwindow *window) {
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
+
+  if (!window2gl[window]->IsCacheMouse()) {
+    return;
+  }
+
   auto& camera = window2gl[window]->GetCamera();
 
   const float camera_speed = 0.05f;
 
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
+    window2gl[window]->ToggleMouse();
   }
 
   auto view = camera.GetView();
@@ -59,6 +71,10 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
   lastX = xpos;
   lastY = ypos;
 
+  if (!window2gl[window]->IsCacheMouse()) {
+    return;
+  }
+
   const float sensitivity = 0.1f;
   xoffset *= sensitivity;
   yoffset *= sensitivity;
@@ -76,6 +92,10 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  if (!window2gl[window]->IsCacheMouse()) {
+    return;
+  }
+
   auto& camera = window2gl[window]->GetCamera();
 
   camera.fov -= (float)yoffset;
@@ -136,7 +156,7 @@ void APIENTRY glDebugOutput(GLenum source,
 }
 
 GLBase::GLBase(const char *title, int width, int height)
-    : _window_width(width), _window_height(height) {
+    : _window_width(width), _window_height(height), _gui_catch_mouse(false) {
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -160,7 +180,7 @@ GLBase::GLBase(const char *title, int width, int height)
     throw "fail to glad load gl loader\n";
   }
 
-  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  // glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(_window, mouse_callback);
   glfwSetScrollCallback(_window, scroll_callback);
 
@@ -168,10 +188,19 @@ GLBase::GLBase(const char *title, int width, int height)
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(glDebugOutput, nullptr);
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+  ImGui::CreateContext();
+  ImGui_ImplGlfw_InitForOpenGL(_window, true);
+  ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 GLBase::~GLBase() {
   if (_window) {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(_window);
     glfwTerminate();
   }
 }
@@ -180,14 +209,41 @@ void GLBase::Init() {
 }
 
 void GLBase::Run() {
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
   while (!glfwWindowShouldClose(_window)) {
     process_input(_window);
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Contrl Panel");
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    if (ImGui::Button("Control Camera")) {
+      ToggleMouse();
+    }
+
     Draw();
+
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(_window);
     glfwPollEvents();
   }
+}
+
+void GLBase::ToggleMouse()
+{
+  _gui_catch_mouse = !_gui_catch_mouse;
+  glfwSetInputMode(_window, GLFW_CURSOR, _gui_catch_mouse ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+}
+
+bool GLBase::IsCacheMouse()
+{
+  return _gui_catch_mouse;
 }
 
 void GLBase::Draw() {}
