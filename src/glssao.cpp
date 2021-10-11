@@ -67,7 +67,7 @@ void GLSSAO::Init() {
   glEnable(GL_CULL_FACE);
 }
 
-float lerp(float a, float b, float f)
+static float lerp(float a, float b, float f)
 {
     return a + f * (b - a);
 }

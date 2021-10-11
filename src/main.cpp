@@ -1,9 +1,9 @@
 #include <iostream>
-#include "glssao.h"
+#include "glpbr.h"
 
 int main() {
 
-  LearnGL::GLSSAO inst;
+  LearnGL::GLPbr inst;
 
   inst.Init();
   inst.Run();
