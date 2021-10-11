@@ -15,5 +15,8 @@ protected:
 
 private:
   Shader *_pbr_shader;
+
+  glm::vec3 _ball_color;
+  glm::vec3 _light_color;
 };
 }; // namespace LearnGL
